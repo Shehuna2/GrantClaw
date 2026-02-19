@@ -5,6 +5,7 @@ import { env } from "./env.js";
 import { registry } from "./chain.js";
 import { buildMilestoneHash } from "./milestone.js";
 import { buildProposalDoc, buildProposalTitle, hashDeterministicJson } from "./proposal.js";
+import { evaluateProposal } from "./ai.js";
 
 const app = express();
 app.use(cors());
@@ -20,7 +21,7 @@ const generateSchema = z.object({
   whyBNB: z.string().min(1)
 });
 
-app.post("/api/generate", (req, res) => {
+app.post("/api/generate", async (req, res) => {
   const parsed = generateSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
@@ -29,11 +30,21 @@ app.post("/api/generate", (req, res) => {
   const proposalDoc = buildProposalDoc(parsed.data);
   const { json, hash } = hashDeterministicJson(proposalDoc);
   const title = buildProposalTitle(parsed.data);
+  let ai = null;
+
+  if (env.OPENAI_API_KEY) {
+    try {
+      ai = await evaluateProposal(proposalDoc);
+    } catch (error) {
+      console.warn("AI evaluation unavailable:", (error as Error).message);
+    }
+  }
 
   return res.json({
     proposalJson: JSON.parse(json),
     proposalHash: hash,
-    title
+    title,
+    ai
   });
 });
 
