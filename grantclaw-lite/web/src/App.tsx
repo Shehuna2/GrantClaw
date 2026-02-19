@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Shell } from "./components/Shell";
-import { FeedPage } from "./pages/FeedPage";
+import FeedPage from "./pages/FeedPage";
 import { GeneratePage } from "./pages/GeneratePage";
 import { PreviewPage } from "./pages/PreviewPage";
 import { ProposalDetailPage } from "./pages/ProposalDetailPage";
