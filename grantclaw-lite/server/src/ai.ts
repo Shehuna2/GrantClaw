@@ -106,6 +106,52 @@ function normalizeEvaluation(value: unknown): AIEvaluation {
   };
 }
 
+export function evaluateProposalLite(doc: any): AIEvaluation {
+  const projectName = String(doc?.projectName || "Project");
+  const oneLiner = String(doc?.oneLiner || "");
+  const milestones = Array.isArray(doc?.sections?.milestones) ? doc.sections.milestones : [];
+  const onchainPlan = `${String(doc?.whyBNB || "")} ${String(doc?.onchainPlan || "")}`.toLowerCase();
+  const title = `${projectName} — ${oneLiner}`;
+
+  let score = 20;
+  if (title.length > 10) {
+    score += 20;
+  }
+  if (milestones.length > 0) {
+    score += 20;
+  }
+  if (onchainPlan.includes("bnb") || onchainPlan.includes("testnet") || onchainPlan.includes("contract")) {
+    score += 20;
+  }
+
+  score = Math.max(0, Math.min(100, score));
+
+  const risk: AIEvaluation["risk"] = score < 45 ? "High" : score <= 75 ? "Medium" : "Low";
+
+  return {
+    summary: `${projectName} is framed for OpenClaw with an onchain accountability path. The plan is scored using deterministic checks for proposal clarity, milestone structure, and chain execution intent.`,
+    score,
+    risk,
+    suggestedMilestones: [
+      {
+        title: "MVP Onchain Proof",
+        description: "Deliver the first complete proposal-to-submit flow and prove reproducibility of the anchored proposal hash.",
+        kpi: "1 tx hash + event on BSC testnet"
+      },
+      {
+        title: "Public Feed + Detail Page",
+        description: "Expose proposal and milestone transparency by listing proposals and opening a detail page with timeline context.",
+        kpi: "Feed lists proposals + detail shows milestones"
+      },
+      {
+        title: "Milestone Check-in",
+        description: "Execute and verify one milestone submission to prove ongoing progress tracking works end-to-end.",
+        kpi: "Submit 1 milestone tx + visible in UI"
+      }
+    ]
+  };
+}
+
 export async function evaluateProposal(doc: unknown): Promise<AIEvaluation> {
   if (!env.OPENAI_API_KEY) {
     throw new Error("OPENAI_API_KEY is not configured");

@@ -5,7 +5,7 @@ import { env } from "./env.js";
 import { registry } from "./chain.js";
 import { buildMilestoneHash } from "./milestone.js";
 import { buildProposalDoc, buildProposalTitle, hashDeterministicJson } from "./proposal.js";
-import { evaluateProposal } from "./ai.js";
+import { evaluateProposal, evaluateProposalLite, type AIEvaluation } from "./ai.js";
 
 const app = express();
 app.use(cors());
@@ -30,14 +30,22 @@ app.post("/api/generate", async (req, res) => {
   const proposalDoc = buildProposalDoc(parsed.data);
   const { json, hash } = hashDeterministicJson(proposalDoc);
   const title = buildProposalTitle(parsed.data);
-  let ai = null;
+  let ai: AIEvaluation | null = null;
 
-  if (env.OPENAI_API_KEY) {
-    try {
-      ai = await evaluateProposal(proposalDoc);
-    } catch (error) {
-      console.warn("AI evaluation unavailable:", (error as Error).message);
-    }
+  const openAiEvaluation: Promise<AIEvaluation> = env.OPENAI_API_KEY
+    ? Promise.race<AIEvaluation>([
+      evaluateProposal(proposalDoc),
+      new Promise<AIEvaluation>((_, reject) => {
+        setTimeout(() => reject(new Error("AI timeout")), 7000);
+      })
+    ])
+    : Promise.reject(new Error("OPENAI_API_KEY is not configured"));
+
+  try {
+    ai = await openAiEvaluation;
+  } catch (error) {
+    console.warn("AI evaluation fallback used:", (error as Error).message);
+    ai = evaluateProposalLite(proposalDoc);
   }
 
   return res.json({
