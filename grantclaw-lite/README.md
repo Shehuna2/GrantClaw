@@ -93,3 +93,8 @@ grantclaw-lite/
 - [x] Hardhat tests for proposal + milestone success and revert paths.
 - [x] Convenience scripts for install/dev/deploy.
 - [x] No secrets committed.
+
+## AI Build Log
+- **What AI does:** during `POST /api/generate`, the server asks an AI judge assistant to summarize the proposal, score feasibility (0-100), classify risk (`Low`/`Medium`/`High`), and suggest exactly 3 milestone ideas with measurable KPIs.
+- **Prompt style used:** `server/src/ai.ts` sends a strict instruction to return JSON only, using an exact schema (`summary`, `score`, `risk`, and `suggestedMilestones[3]` with `title/description/kpi`) and no extra keys or markdown.
+- **Safety + source of truth:** if `OPENAI_API_KEY` is missing or OpenAI fails/times out, generation still returns the deterministic proposal + hash with a deterministic AI-lite evaluation. Onchain proposal/milestone events remain the source of truth; AI output is advisory only.

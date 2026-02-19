@@ -22,10 +22,18 @@ export type GeneratePayload = {
   whyBNB: string;
 };
 
+export type AIEvaluation = {
+  summary: string;
+  score: number;
+  risk: "Low" | "Medium" | "High";
+  suggestedMilestones: { title: string; description: string; kpi: string }[];
+};
+
 export type GenerateResponse = {
   proposalJson: Record<string, string>;
   proposalHash: string;
   title: string;
+  ai?: AIEvaluation | null;
 };
 
 export type SubmitPayload = {
