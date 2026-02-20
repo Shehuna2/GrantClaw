@@ -38,7 +38,10 @@ export function ProposalDetailPage() {
 
   async function submitMilestone(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+
+    const formEl = event.currentTarget; // ✅ capture before await
+    const form = new FormData(formEl);
+
     const payload = {
       proposalHash: hash,
       title: String(form.get("title") || ""),
@@ -49,7 +52,7 @@ export function ProposalDetailPage() {
     try {
       setSubmitting(true);
       await api.milestone(payload);
-      event.currentTarget.reset();
+      formEl.reset(); // ✅ safe
       await load();
     } catch (err) {
       setError((err as Error).message);
@@ -57,6 +60,7 @@ export function ProposalDetailPage() {
       setSubmitting(false);
     }
   }
+
 
   return (
     <div className="space-y-4">
