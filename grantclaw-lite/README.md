@@ -93,3 +93,35 @@ grantclaw-lite/
 - [x] Hardhat tests for proposal + milestone success and revert paths.
 - [x] Convenience scripts for install/dev/deploy.
 - [x] No secrets committed.
+
+## AI Build Log
+- **What AI does:** during `POST /api/generate`, the server asks an AI judge assistant to summarize the proposal, score feasibility (0-100), classify risk (`Low`/`Medium`/`High`), and suggest exactly 3 milestone ideas with measurable KPIs.
+- **Prompt style used:** `server/src/ai.ts` sends a strict instruction to return JSON only, using an exact schema (`summary`, `score`, `risk`, and `suggestedMilestones[3]` with `title/description/kpi`) and no extra keys or markdown.
+- **Safety + source of truth:** if `OPENAI_API_KEY` is missing or OpenAI fails/times out, generation still returns the deterministic proposal + hash with a deterministic AI-lite evaluation. Onchain proposal/milestone events remain the source of truth; AI output is advisory only.
+
+## Deploy on Vercel (frontend + backend as one app)
+This repo now supports a single-project Vercel deployment with Vite frontend and serverless `/api/*` functions.
+
+### Environment variables on Vercel
+Set these **Server-side / API** env vars:
+- `BSC_TESTNET_RPC`
+- `SUBMITTER_PRIVATE_KEY`
+- `REGISTRY_ADDRESS`
+- `OPENAI_API_KEY` (optional)
+
+Set these **Frontend (Vite)** env vars:
+- `VITE_BSC_TESTNET_RPC`
+- `VITE_REGISTRY_ADDRESS`
+- `VITE_EVENT_LOOKBACK_BLOCKS`
+- `VITE_REGISTRY_START_BLOCK` (optional)
+- `VITE_API_BASE` (optional; leave empty for same-origin `/api` calls)
+
+### Redeploy steps
+1. Push your branch to GitHub.
+2. In Vercel, import the repo (or trigger redeploy on existing project).
+3. Confirm env vars above are configured for the target environment.
+4. Redeploy.
+5. Smoke test:
+   - App loads (no HTML/JSON mismatch errors)
+   - `GET /api/grants` returns JSON
+   - `POST /api/generate` returns JSON (with AI evaluation or deterministic fallback)
