@@ -1,4 +1,5 @@
-const apiBase = import.meta.env.VITE_API_BASE as string;
+const configuredApiBase = (import.meta.env.VITE_API_BASE as string | undefined)?.trim();
+const apiBase = configuredApiBase ? configuredApiBase.replace(/\/$/, "") : "";
 
 async function postJson<T>(path: string, body: object): Promise<T> {
   const response = await fetch(`${apiBase}${path}`, {
@@ -7,6 +8,15 @@ async function postJson<T>(path: string, body: object): Promise<T> {
     body: JSON.stringify(body)
   });
 
+  const payload = await response.json();
+  if (!response.ok) {
+    throw new Error(payload.error || "API request failed");
+  }
+  return payload as T;
+}
+
+async function getJson<T>(path: string): Promise<T> {
+  const response = await fetch(`${apiBase}${path}`);
   const payload = await response.json();
   if (!response.ok) {
     throw new Error(payload.error || "API request failed");
@@ -61,8 +71,22 @@ export type MilestoneResponse = {
   milestoneHash: string;
 };
 
+export type GrantsResponse = {
+  proposals: Array<{
+    proposalHash: string;
+    submitter: string;
+    grantId: string;
+    title: string;
+    uri: string;
+    timestamp: number;
+    blockNumber: number;
+    txHash: string;
+  }>;
+};
+
 export const api = {
   generate: (payload: GeneratePayload) => postJson<GenerateResponse>("/api/generate", payload),
   submit: (payload: SubmitPayload) => postJson<SubmitResponse>("/api/submit", payload),
-  milestone: (payload: MilestonePayload) => postJson<MilestoneResponse>("/api/milestone", payload)
+  milestone: (payload: MilestonePayload) => postJson<MilestoneResponse>("/api/milestone", payload),
+  grants: () => getJson<GrantsResponse>("/api/grants")
 };

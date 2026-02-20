@@ -1,5 +1,3 @@
-import { env } from "./env.js";
-
 export type AIEvaluation = {
   summary: string;
   score: number;
@@ -153,14 +151,16 @@ export function evaluateProposalLite(doc: any): AIEvaluation {
 }
 
 export async function evaluateProposal(doc: unknown): Promise<AIEvaluation> {
-  if (!env.OPENAI_API_KEY) {
+  const apiKey = process.env.OPENAI_API_KEY;
+
+  if (!apiKey) {
     throw new Error("OPENAI_API_KEY is not configured");
   }
 
   const dynamicImport = new Function("specifier", "return import(specifier)") as (specifier: string) => Promise<{ default: new (config: { apiKey: string }) => { responses: { create: (payload: unknown) => Promise<{ output_text?: string | null }> } } }>;
   const openAiModule = await dynamicImport("openai");
   const OpenAIClient = openAiModule.default;
-  const client = new OpenAIClient({ apiKey: env.OPENAI_API_KEY });
+  const client = new OpenAIClient({ apiKey });
 
   const response = await client.responses.create({
     model: "gpt-4o-mini",

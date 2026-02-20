@@ -1,7 +1,9 @@
 import dotenv from "dotenv";
 import { z } from "zod";
 
-dotenv.config();
+if (!process.env.VERCEL) {
+  dotenv.config();
+}
 
 const envSchema = z.object({
   BSC_TESTNET_RPC: z.string().min(1),
@@ -11,4 +13,8 @@ const envSchema = z.object({
   PORT: z.string().default("8080")
 });
 
-export const env = envSchema.parse(process.env);
+export function readEnv() {
+  return envSchema.parse(process.env);
+}
+
+export const env = readEnv();
