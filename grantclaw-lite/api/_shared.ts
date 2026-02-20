@@ -1,7 +1,7 @@
 import { Contract, JsonRpcProvider, Wallet, type EventLog } from "ethers";
+import { evaluateProposal, evaluateProposalLite, type AIEvaluation } from "../server/src/ai";
 import { buildMilestoneHash } from "../server/src/milestone";
 import { buildProposalDoc, buildProposalTitle, hashDeterministicJson } from "../server/src/proposal";
-import { evaluateProposal, evaluateProposalLite, type AIEvaluation } from "../server/src/ai";
 
 const hashRegex = /^0x[a-fA-F0-9]{64}$/;
 const pkRegex = /^0x[a-fA-F0-9]{64}$/;
@@ -40,9 +40,35 @@ export type VercelResponse = {
   setHeader: (name: string, value: string) => void;
 };
 
+type VercelHandler = (req: VercelRequest, res: VercelResponse) => Promise<void> | void;
+
+function errorMessage(error: unknown): string {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return "Server error";
+}
+
+export function wrapHandler(fn: VercelHandler): VercelHandler {
+  return async function wrapped(req: VercelRequest, res: VercelResponse) {
+    res.setHeader("Content-Type", "application/json");
+
+    try {
+      await fn(req, res);
+    } catch (error) {
+      res.status(500).json({ error: errorMessage(error) });
+    }
+  };
+}
+
 export function parseBody<T extends object>(req: VercelRequest): T {
   if (typeof req.body === "string") {
-    return JSON.parse(req.body) as T;
+    try {
+      return JSON.parse(req.body) as T;
+    } catch {
+      throw new Error("Invalid JSON body");
+    }
   }
 
   if (req.body && typeof req.body === "object") {
@@ -69,9 +95,7 @@ export function allowGetOnly(req: VercelRequest, res: VercelResponse): boolean {
 }
 
 function readAIEnv(): { OPENAI_API_KEY?: string } {
-  const apiKey = typeof process.env.OPENAI_API_KEY === "string" && process.env.OPENAI_API_KEY.length > 0
-    ? process.env.OPENAI_API_KEY
-    : undefined;
+  const apiKey = typeof process.env.OPENAI_API_KEY === "string" && process.env.OPENAI_API_KEY.length > 0 ? process.env.OPENAI_API_KEY : undefined;
   return { OPENAI_API_KEY: apiKey };
 }
 
@@ -81,12 +105,18 @@ function readChainEnv(): { BSC_TESTNET_RPC: string; SUBMITTER_PRIVATE_KEY: strin
   const registry = process.env.REGISTRY_ADDRESS;
 
   if (!rpc) {
-    throw new Error("Missing BSC_TESTNET_RPC");
+    throw new Error("Missing required environment variable: BSC_TESTNET_RPC");
   }
-  if (!pk || !pkRegex.test(pk)) {
+  if (!pk) {
+    throw new Error("Missing required environment variable: SUBMITTER_PRIVATE_KEY");
+  }
+  if (!pkRegex.test(pk)) {
     throw new Error("Invalid SUBMITTER_PRIVATE_KEY");
   }
-  if (!registry || !addressRegex.test(registry)) {
+  if (!registry) {
+    throw new Error("Missing required environment variable: REGISTRY_ADDRESS");
+  }
+  if (!addressRegex.test(registry)) {
     throw new Error("Invalid REGISTRY_ADDRESS");
   }
 
@@ -167,11 +197,11 @@ export async function generateProposalResponse(payload: unknown) {
 
   const openAiEvaluation: Promise<AIEvaluation> = env.OPENAI_API_KEY
     ? Promise.race<AIEvaluation>([
-      evaluateProposal(proposalDoc),
-      new Promise<AIEvaluation>((_, reject) => {
-        setTimeout(() => reject(new Error("AI timeout")), 7000);
-      })
-    ])
+        evaluateProposal(proposalDoc),
+        new Promise<AIEvaluation>((_, reject) => {
+          setTimeout(() => reject(new Error("AI timeout")), 7000);
+        })
+      ])
     : Promise.reject(new Error("OPENAI_API_KEY is not configured"));
 
   try {
