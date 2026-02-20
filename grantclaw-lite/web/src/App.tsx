@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Shell } from "./components/Shell";
 import FeedPage from "./pages/FeedPage";
 import { GeneratePage } from "./pages/GeneratePage";
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/feed" element={<FeedPage />} />
         <Route path="/p/:hash" element={<ProposalDetailPage />} />
       </Routes>
+      <SpeedInsights />
     </Shell>
   );
 }
