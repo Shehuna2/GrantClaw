@@ -8,3 +8,7 @@ coverage
 *.log
 server/dist
 web/dist
+
+# workspace lockfile only
+server/pnpm-lock.yaml
+web/pnpm-lock.yaml

@@ -36,7 +36,7 @@ grantclaw-lite/
 1. **Install dependencies**
    ```bash
    cd grantclaw-lite
-   npm run install:all
+   pnpm install
    ```
 2. **Configure server env**
    ```bash
@@ -50,7 +50,7 @@ grantclaw-lite/
    - `PORT` (default `8080`)
 3. **Deploy contract to BSC testnet**
    ```bash
-   npm run deploy:testnet
+   pnpm run deploy:testnet
    ```
    Copy deployed address into `server/.env` as `REGISTRY_ADDRESS`.
 4. **Configure web env**
@@ -64,11 +64,11 @@ grantclaw-lite/
    - `VITE_EVENT_LOOKBACK_BLOCKS=200000`
 5. **Run tests**
    ```bash
-   npx hardhat test
+   pnpm test
    ```
 6. **Run app (server + web)**
    ```bash
-   npm run dev
+   pnpm dev
    ```
    - Web: `http://localhost:5173`
    - API: `http://localhost:8080`
@@ -101,6 +101,12 @@ grantclaw-lite/
 
 ## Deploy on Vercel (frontend + backend as one app)
 This repo now supports a single-project Vercel deployment with Vite frontend and serverless `/api/*` functions.
+
+### Vercel project settings
+- **Root Directory:** `grantclaw-lite`
+- **Install Command:** `pnpm install`
+- **Build Command:** `pnpm -C web build`
+- **Output Directory:** `web/dist`
 
 ### Environment variables on Vercel
 Set these **Server-side / API** env vars:
