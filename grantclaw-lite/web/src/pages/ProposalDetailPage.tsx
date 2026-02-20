@@ -39,7 +39,7 @@ export function ProposalDetailPage() {
   async function submitMilestone(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const formEl = event.currentTarget; // ✅ capture before await
+    const formEl = event.currentTarget;
     const form = new FormData(formEl);
 
     const payload = {
@@ -52,7 +52,7 @@ export function ProposalDetailPage() {
     try {
       setSubmitting(true);
       await api.milestone(payload);
-      formEl.reset(); // ✅ safe
+      formEl.reset();
       await load();
     } catch (err) {
       setError((err as Error).message);
@@ -61,16 +61,19 @@ export function ProposalDetailPage() {
     }
   }
 
-
   return (
     <div className="space-y-4">
       <Card>
-        <h2 className="mb-2 text-lg font-semibold">Proposal Detail</h2>
-        <p className="mb-2 text-xs"><code>{hash}</code></p>
+        <h2 className="mb-2 text-xl font-semibold tracking-tight">Proposal Detail</h2>
+        <p className="mb-2 text-xs">
+          <code className="rounded bg-slate-100 px-1 py-0.5">{hash}</code>
+        </p>
         {!proposal && <p className="text-sm text-slate-500">Proposal not found in event lookback range.</p>}
         {proposal && (
-          <div className="space-y-1 text-sm">
-            <p><strong>{proposal.title}</strong></p>
+          <div className="space-y-1 text-sm text-slate-700">
+            <p>
+              <strong>{proposal.title}</strong>
+            </p>
             <p>Grant: {proposal.grantId}</p>
             <p>Submitter: {proposal.submitter}</p>
             {proposal.uri && <p>URI: {proposal.uri}</p>}
@@ -81,34 +84,33 @@ export function ProposalDetailPage() {
       {matchingDraft && <AIEvaluationCard ai={matchingDraft.ai} />}
 
       <Card>
-        <h3 className="mb-3 font-semibold">Submit Milestone</h3>
+        <h3 className="mb-3 text-base font-semibold">Submit Milestone</h3>
         <form className="grid gap-3" onSubmit={submitMilestone}>
-          <input className="rounded border p-2" name="title" placeholder="Milestone title" required />
-          <textarea className="rounded border p-2" name="description" placeholder="Milestone description" required />
-          <input className="rounded border p-2" name="uri" placeholder="Optional URI" />
-          <button className="rounded bg-slate-900 px-4 py-2 text-white" disabled={submitting} type="submit">
+          <input className="gc-input" name="title" placeholder="Milestone title" required />
+          <textarea className="gc-input min-h-24" name="description" placeholder="Milestone description" required />
+          <input className="gc-input" name="uri" placeholder="Optional URI" />
+          <button className="gc-btn-primary w-fit" disabled={submitting} type="submit">
             {submitting ? "Submitting..." : "Submit Milestone"}
           </button>
         </form>
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-2 text-sm text-rose-600">{error}</p>}
       </Card>
 
       <Card>
-        <h3 className="mb-3 font-semibold">Milestone Timeline</h3>
+        <h3 className="mb-3 text-base font-semibold">Milestone Timeline</h3>
         <div className="space-y-2">
           {milestones.map((milestone) => (
-            <div className="rounded border p-3" key={`${milestone.milestoneHash}-${milestone.blockNumber}`}>
+            <div className="rounded-xl border border-slate-200 bg-white/70 p-3" key={`${milestone.milestoneHash}-${milestone.blockNumber}`}>
               <p className="font-medium">{milestone.title}</p>
               <p className="truncate text-xs text-slate-500">{milestone.milestoneHash}</p>
-              {milestone.uri && (
-                milestone.uri.startsWith("http") ? (
-                  <a className="text-xs text-blue-600 underline" href={milestone.uri} rel="noreferrer" target="_blank">
+              {milestone.uri &&
+                (milestone.uri.startsWith("http") ? (
+                  <a className="text-xs text-indigo-600 underline" href={milestone.uri} rel="noreferrer" target="_blank">
                     {milestone.uri}
                   </a>
                 ) : (
                   <p className="text-xs text-slate-500">{milestone.uri}</p>
-                )
-              )}
+                ))}
             </div>
           ))}
           {milestones.length === 0 && <p className="text-sm text-slate-500">No milestones yet.</p>}
