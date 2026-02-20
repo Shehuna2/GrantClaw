@@ -2,6 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: light;
+}
+
 body {
-  @apply text-slate-900;
+  @apply min-h-screen bg-slate-100 text-slate-900 antialiased;
+  background-image:
+    radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.18), transparent 40%),
+    radial-gradient(circle at 90% 0%, rgba(56, 189, 248, 0.15), transparent 35%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2ff 45%, #f8fafc 100%);
+}
+
+#root {
+  @apply min-h-screen;
+}
+
+@layer components {
+  .gc-input {
+    @apply w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2 text-sm text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200;
+  }
+
+  .gc-btn-primary {
+    @apply rounded-xl bg-gradient-to-r from-indigo-600 to-sky-500 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .gc-btn-secondary {
+    @apply rounded-xl border border-slate-200 bg-white/90 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50;
+  }
 }
