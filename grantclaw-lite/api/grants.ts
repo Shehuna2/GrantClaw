@@ -1,15 +1,10 @@
-import { allowGetOnly, fetchGrantProposals, type VercelRequest, type VercelResponse } from "./_shared";
+import { allowGetOnly, fetchGrantProposals, type VercelRequest, type VercelResponse, wrapHandler } from "./_shared";
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader("Content-Type", "application/json");
+export default wrapHandler(async function (req: VercelRequest, res: VercelResponse) {
   if (!allowGetOnly(req, res)) {
     return;
   }
 
-  try {
-    const result = await fetchGrantProposals();
-    res.status(result.status).json(result.body);
-  } catch (error) {
-    res.status(500).json({ error: (error as Error).message || "Failed to load grants" });
-  }
-}
+  const result = await fetchGrantProposals();
+  return res.status(result.status).json(result.body);
+});

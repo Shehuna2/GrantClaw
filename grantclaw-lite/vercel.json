@@ -24,5 +24,10 @@
       "source": "/p/:hash",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "@vercel/node@3.2.17"
+    }
+  }
 }
