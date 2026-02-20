@@ -14,15 +14,16 @@ export function SubmitPage() {
   const [loading, setLoading] = useState(false);
 
   if (!draft) return <Card>No draft found. Generate first.</Card>;
+  const currentDraft = draft;
 
   async function submitProposal() {
     setLoading(true);
     setError("");
     try {
       const response = await api.submit({
-        proposalHash: draft.proposalHash,
-        grantId: draft.grantId,
-        title: draft.title,
+        proposalHash: currentDraft.proposalHash,
+        grantId: currentDraft.grantId,
+        title: currentDraft.title,
         uri
       });
       setTxHash(response.txHash);
@@ -36,7 +37,7 @@ export function SubmitPage() {
   return (
     <Card>
       <h2 className="mb-4 text-lg font-semibold">Submit Proposal Onchain</h2>
-      <p className="mb-2 text-sm">{draft.title}</p>
+      <p className="mb-2 text-sm">{currentDraft.title}</p>
       <input className="mb-3 w-full rounded border p-2" onChange={(e) => setUri(e.target.value)} placeholder="Optional URI (ipfs://...)" value={uri} />
       <button className="rounded bg-slate-900 px-4 py-2 text-white" disabled={loading} onClick={submitProposal} type="button">
         {loading ? "Submitting..." : "Submit Onchain"}
@@ -47,7 +48,7 @@ export function SubmitPage() {
           <p>Tx: <code>{txHash}</code></p>
           <a className="text-blue-600 underline" href={txLink(txHash)} rel="noreferrer" target="_blank">View on BscScan</a>
           <div>
-            <button className="rounded bg-slate-200 px-3 py-2" onClick={() => navigate(`/p/${draft.proposalHash}`)} type="button">
+            <button className="rounded bg-slate-200 px-3 py-2" onClick={() => navigate(`/p/${currentDraft.proposalHash}`)} type="button">
               Go to Proposal Detail
             </button>
           </div>

@@ -1,8 +1,10 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import { AIEvaluationCard } from "../components/AIEvaluationCard";
 import { Card } from "../components/Card";
 import { api } from "../lib/api";
 import { fetchMilestonesByProposal, fetchProposalByHash, MilestoneEvent, ProposalEvent } from "../lib/chain";
+import { readDraft } from "../lib/storage";
 
 export function ProposalDetailPage() {
   const { hash = "" } = useParams();
@@ -10,6 +12,14 @@ export function ProposalDetailPage() {
   const [milestones, setMilestones] = useState<MilestoneEvent[]>([]);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const matchingDraft = useMemo(() => {
+    const draft = readDraft();
+    if (!draft) {
+      return null;
+    }
+
+    return draft.proposalHash.toLowerCase() === hash.toLowerCase() ? draft : null;
+  }, [hash]);
 
   async function load() {
     try {
@@ -63,6 +73,8 @@ export function ProposalDetailPage() {
           </div>
         )}
       </Card>
+
+      {matchingDraft && <AIEvaluationCard ai={matchingDraft.ai} />}
 
       <Card>
         <h3 className="mb-3 font-semibold">Submit Milestone</h3>
