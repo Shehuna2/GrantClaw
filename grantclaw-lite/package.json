@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "install:all": "npm install && npm --prefix server install && npm --prefix web install",
-    "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix web run dev\"",
+    "install:all": "pnpm install",
+    "dev": "concurrently \"pnpm -C server dev\" \"pnpm -C web dev\"",
+    "build": "pnpm -C web build",
     "deploy:testnet": "hardhat run scripts/deploy.ts --network bscTestnet",
     "test": "hardhat test"
   },
@@ -20,5 +21,6 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "ethers": "^6.13.4"
-  }
+  },
+  "packageManager": "pnpm@10.13.1"
 }
