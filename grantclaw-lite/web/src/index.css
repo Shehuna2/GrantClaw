@@ -6,12 +6,23 @@
   color-scheme: light;
 }
 
+.dark {
+  color-scheme: dark;
+}
+
 body {
-  @apply min-h-screen bg-slate-100 text-slate-900 antialiased;
+  @apply min-h-screen bg-slate-100 text-slate-900 antialiased transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100;
   background-image:
     radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.18), transparent 40%),
     radial-gradient(circle at 90% 0%, rgba(56, 189, 248, 0.15), transparent 35%),
     linear-gradient(180deg, #f8fafc 0%, #eef2ff 45%, #f8fafc 100%);
+}
+
+.dark body {
+  background-image:
+    radial-gradient(circle at 10% 10%, rgba(79, 70, 229, 0.25), transparent 42%),
+    radial-gradient(circle at 90% 0%, rgba(14, 116, 144, 0.22), transparent 38%),
+    linear-gradient(180deg, #020617 0%, #0f172a 55%, #020617 100%);
 }
 
 #root {
@@ -20,7 +31,7 @@ body {
 
 @layer components {
   .gc-input {
-    @apply w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2 text-sm text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200;
+    @apply w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2 text-sm text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-500/60 dark:focus:ring-indigo-900/60;
   }
 
   .gc-btn-primary {
@@ -28,6 +39,6 @@ body {
   }
 
   .gc-btn-secondary {
-    @apply rounded-xl border border-slate-200 bg-white/90 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50;
+    @apply rounded-xl border border-slate-200 bg-white/90 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:bg-slate-800;
   }
 }

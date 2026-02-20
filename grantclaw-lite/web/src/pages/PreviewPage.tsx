@@ -28,10 +28,10 @@ export function PreviewPage() {
     <div className="space-y-4">
       <Card>
         <h2 className="mb-4 text-xl font-semibold tracking-tight">Preview Proposal</h2>
-        <p className="mb-2 text-sm text-slate-600">
-          Hash: <code className="rounded bg-slate-100 px-1 py-0.5">{currentDraft.proposalHash}</code>
+        <p className="mb-2 text-sm text-slate-600 dark:text-slate-300">
+          Hash: <code className="rounded bg-slate-100 dark:bg-slate-800 px-1 py-0.5">{currentDraft.proposalHash}</code>
         </p>
-        <pre className="overflow-x-auto rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs">{JSON.stringify(currentDraft.proposalJson, null, 2)}</pre>
+        <pre className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 p-3 text-xs">{JSON.stringify(currentDraft.proposalJson, null, 2)}</pre>
         <div className="mt-4 flex gap-2">
           <button className="gc-btn-secondary" onClick={downloadJson} type="button">
             Download JSON

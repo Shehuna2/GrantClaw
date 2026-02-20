@@ -37,18 +37,18 @@ export function SubmitPage() {
   return (
     <Card className="max-w-3xl">
       <h2 className="mb-4 text-xl font-semibold tracking-tight">Submit Proposal Onchain</h2>
-      <p className="mb-2 text-sm text-slate-600">{currentDraft.title}</p>
+      <p className="mb-2 text-sm text-slate-600 dark:text-slate-300">{currentDraft.title}</p>
       <input className="gc-input mb-3" onChange={(e) => setUri(e.target.value)} placeholder="Optional URI (ipfs://...)" value={uri} />
       <button className="gc-btn-primary" disabled={loading} onClick={submitProposal} type="button">
         {loading ? "Submitting..." : "Submit Onchain"}
       </button>
-      {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
+      {error && <p className="mt-3 text-sm text-rose-600 dark:text-rose-400">{error}</p>}
       {txHash && (
         <div className="mt-4 space-y-2 rounded-xl border border-emerald-100 bg-emerald-50/60 p-3 text-sm">
           <p>
             Tx: <code>{txHash}</code>
           </p>
-          <a className="font-medium text-indigo-600 underline" href={txLink(txHash)} rel="noreferrer" target="_blank">
+          <a className="font-medium text-indigo-600 dark:text-indigo-300 underline" href={txLink(txHash)} rel="noreferrer" target="_blank">
             View on BscScan
           </a>
           <div>
@@ -58,7 +58,7 @@ export function SubmitPage() {
           </div>
         </div>
       )}
-      <p className="mt-4 text-xs text-slate-500">
+      <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
         <Link className="underline" to="/feed">
           Or open feed
         </Link>

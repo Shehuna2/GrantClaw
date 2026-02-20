@@ -66,11 +66,11 @@ export function ProposalDetailPage() {
       <Card>
         <h2 className="mb-2 text-xl font-semibold tracking-tight">Proposal Detail</h2>
         <p className="mb-2 text-xs">
-          <code className="rounded bg-slate-100 px-1 py-0.5">{hash}</code>
+          <code className="rounded bg-slate-100 dark:bg-slate-800 px-1 py-0.5">{hash}</code>
         </p>
-        {!proposal && <p className="text-sm text-slate-500">Proposal not found in event lookback range.</p>}
+        {!proposal && <p className="text-sm text-slate-500 dark:text-slate-400">Proposal not found in event lookback range.</p>}
         {proposal && (
-          <div className="space-y-1 text-sm text-slate-700">
+          <div className="space-y-1 text-sm text-slate-700 dark:text-slate-200">
             <p>
               <strong>{proposal.title}</strong>
             </p>
@@ -93,27 +93,27 @@ export function ProposalDetailPage() {
             {submitting ? "Submitting..." : "Submit Milestone"}
           </button>
         </form>
-        {error && <p className="mt-2 text-sm text-rose-600">{error}</p>}
+        {error && <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">{error}</p>}
       </Card>
 
       <Card>
         <h3 className="mb-3 text-base font-semibold">Milestone Timeline</h3>
         <div className="space-y-2">
           {milestones.map((milestone) => (
-            <div className="rounded-xl border border-slate-200 bg-white/70 p-3" key={`${milestone.milestoneHash}-${milestone.blockNumber}`}>
+            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white/70 p-3" key={`${milestone.milestoneHash}-${milestone.blockNumber}`}>
               <p className="font-medium">{milestone.title}</p>
-              <p className="truncate text-xs text-slate-500">{milestone.milestoneHash}</p>
+              <p className="truncate text-xs text-slate-500 dark:text-slate-400">{milestone.milestoneHash}</p>
               {milestone.uri &&
                 (milestone.uri.startsWith("http") ? (
-                  <a className="text-xs text-indigo-600 underline" href={milestone.uri} rel="noreferrer" target="_blank">
+                  <a className="text-xs text-indigo-600 dark:text-indigo-300 underline" href={milestone.uri} rel="noreferrer" target="_blank">
                     {milestone.uri}
                   </a>
                 ) : (
-                  <p className="text-xs text-slate-500">{milestone.uri}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{milestone.uri}</p>
                 ))}
             </div>
           ))}
-          {milestones.length === 0 && <p className="text-sm text-slate-500">No milestones yet.</p>}
+          {milestones.length === 0 && <p className="text-sm text-slate-500 dark:text-slate-400">No milestones yet.</p>}
         </div>
       </Card>
     </div>

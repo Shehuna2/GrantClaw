@@ -47,22 +47,22 @@ export default function FeedPage() {
 
       <div className="space-y-3">
         {items.map((e) => (
-          <div key={`${e.proposalHash}:${e.blockNumber}`} className="rounded-xl border border-slate-200 bg-white/70 p-4">
+          <div key={`${e.proposalHash}:${e.blockNumber}`} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white/70 p-4">
             <div className="font-semibold">{e.title}</div>
-            <div className="text-sm text-slate-600">Grant: {e.grantId}</div>
-            <div className="mt-2 break-all text-xs text-slate-500">Hash: {e.proposalHash}</div>
-            <div className="break-all text-xs text-slate-500">Submitter: {e.submitter}</div>
+            <div className="text-sm text-slate-600 dark:text-slate-300">Grant: {e.grantId}</div>
+            <div className="mt-2 break-all text-xs text-slate-500 dark:text-slate-400">Hash: {e.proposalHash}</div>
+            <div className="break-all text-xs text-slate-500 dark:text-slate-400">Submitter: {e.submitter}</div>
             <div className="mt-2 flex gap-3 text-sm">
-              <a className="font-medium text-indigo-600 underline" href={txLink(e.txHash)} target="_blank" rel="noreferrer">
+              <a className="font-medium text-indigo-600 dark:text-indigo-300 underline" href={txLink(e.txHash)} target="_blank" rel="noreferrer">
                 Tx
               </a>
-              <a className="font-medium text-indigo-600 underline" href={`/p/${e.proposalHash}`}>
+              <a className="font-medium text-indigo-600 dark:text-indigo-300 underline" href={`/p/${e.proposalHash}`}>
                 Open
               </a>
             </div>
           </div>
         ))}
-        {!busy && items.length === 0 ? <div className="text-sm text-slate-600">No proposals found yet.</div> : null}
+        {!busy && items.length === 0 ? <div className="text-sm text-slate-600 dark:text-slate-300">No proposals found yet.</div> : null}
       </div>
     </Card>
   );
